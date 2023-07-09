@@ -81,17 +81,16 @@ def save_word_audio(dir, word,Count,audio_file):
     for j in range(0,math.ceil(t_audio/0.2)):
         current_frame = math.ceil((j*0.2)*sample_freq)
         next_frame = math.ceil(((j*0.2)+seconds)*sample_freq)
-        if Count == num_frames:
-            if frames[current_frame] > 50 or frames[current_frame] < -50:
-                num_frames += 1
-                print(num_frames)
-                with wave.open(f"Allfiles/{dir}{word}.wav",'wb') as new_word:
-                    new_word.setnchannels(1) # mono
-                    new_word.setsampwidth(2)
-                    new_word.setframerate(sample_freq)
-                    new_word.writeframes(frames[current_frame:next_frame])
-            elif frames[current_frame] > 50:
-                num_frames += 1
+        if frames[current_frame] > 50 and Count == num_frames:
+            num_frames += 1
+            print(num_frames)
+            with wave.open(f"Allfiles/{dir}{word}.wav",'wb') as new_word:
+                new_word.setnchannels(1) # mono
+                new_word.setsampwidth(2)
+                new_word.setframerate(sample_freq)
+                new_word.writeframes(frames[current_frame:next_frame])
+        elif frames[current_frame] > 50:
+            num_frames += 1
     
     #obj = sr.AudioFile("microphone-results.wav")
     #r = sr.Recognizer()
