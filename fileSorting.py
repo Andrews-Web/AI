@@ -71,17 +71,17 @@ def save_word_audio(dir, word,Count,audio_file):
     t_audio = n_samples/sample_freq
 
     frames = obj.readframes(obj.getnframes())
+
     obj.close()
 
     seconds = 0.8
     num_frames = 0
 
-
     
     for j in range(0,math.ceil(t_audio/0.2)):
         current_frame = math.ceil((j*0.2)*sample_freq)
         next_frame = math.ceil(((j*0.2)+seconds)*sample_freq)
-        if frames[current_frame] > 50 and Count == num_frames:
+        if frames[current_frame] > 20 and Count == num_frames:
             num_frames += 1
             print(num_frames)
             with wave.open(f"Allfiles/{dir}{word}.wav",'wb') as new_word:

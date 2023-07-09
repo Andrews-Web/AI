@@ -41,6 +41,10 @@ def get_Transcript(id):
 #    subprocess.call(['ffmpeg', '-i', 'mp3_file.mp3','ScrapingAudio.wav'])
 
 obj = sr.AudioFile("ScrapingAudio.wav")
+wave_obj = wave.open("ScrapingAudio.wav", "rb")
+
+
+
 r = sr.Recognizer()
 count = 59
 while True:
