@@ -73,7 +73,7 @@ def save_word_audio(dir, word,Count,audio_file):
     frames = obj.readframes(obj.getnframes())
     obj.close()
 
-    seconds = 0.5
+    seconds = 0.8
     num_frames = 0
 
 

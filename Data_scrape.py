@@ -46,8 +46,8 @@ count = 59
 while True:
     print("Starting to scrape...")
     with obj as source: 
-        audio = r.record(source, offset=count, duration = 59)
-        count += 59
+        audio = r.record(source, offset=count, duration = 10)
+        count += 10
 
     print("Got Audio now to transcribe it...")
     # recognize speech using Google Speech Recognition
@@ -59,7 +59,7 @@ while True:
     wordbag = nltk.word_tokenize(value)
     count = 0
     dir = ""
-    
+
     for i in wordbag:
         count += 1
         find_word(i,count, "")
