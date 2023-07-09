@@ -66,7 +66,7 @@ for j in range(0,math.ceil(t_audio/0.2)):
         new_word.writeframes(frames[current_frame:next_frame])
         new_word.close()"""
 
-r = sr.Recognizer()
+"""r = sr.Recognizer()
 m = sr.Microphone()
 
 print("A moment of silence, please...")
@@ -87,4 +87,4 @@ while True:
                 f.write(audio.get_wav_data())
         except:
             print("You did not say anything")
-            break
+            break"""

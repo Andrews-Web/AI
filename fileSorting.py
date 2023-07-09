@@ -59,37 +59,57 @@ def find_word(word,count, audio):
 
 def save_word_audio(dir, word,Count,audio_file):
     print("Saving audio...")
-    if audio_file == "":
-        obj = wave.open('microphone-results.wav', 'rb')
-    else:
-        obj = wave.open(audio_file, 'rb')
+    #if audio_file == "":
+    obj = wave.open('microphone-results.wav', 'rb')
+    #else:
+    #    obj = wave.open(audio_file, 'rb')
 
 
     sample_freq = obj.getframerate()
     n_samples = obj.getnframes()
+    
     t_audio = n_samples/sample_freq
 
     frames = obj.readframes(obj.getnframes())
-
     obj.close()
 
-    seconds = 0.4
+    seconds = 0.5
     num_frames = 0
+
 
     
     for j in range(0,math.ceil(t_audio/0.2)):
         current_frame = math.ceil((j*0.2)*sample_freq)
         next_frame = math.ceil(((j*0.2)+seconds)*sample_freq)
-        if frames[current_frame] > 200 & Count == num_frames:
-            num_frames += 1
-            print(num_frames)
-            with wave.open(f"Allfiles/{dir}{word}.wav",'wb') as new_word:
-                new_word.setnchannels(1) # mono
-                new_word.setsampwidth(2)
-                new_word.setframerate(sample_freq)
-                new_word.writeframes(frames[current_frame:next_frame])
-        elif frames[current_frame] > 200:
-            num_frames += 1
+        if Count == num_frames:
+            if frames[current_frame] > 50 or frames[current_frame] < -50:
+                num_frames += 1
+                print(num_frames)
+                with wave.open(f"Allfiles/{dir}{word}.wav",'wb') as new_word:
+                    new_word.setnchannels(1) # mono
+                    new_word.setsampwidth(2)
+                    new_word.setframerate(sample_freq)
+                    new_word.writeframes(frames[current_frame:next_frame])
+            elif frames[current_frame] > 50:
+                num_frames += 1
+    
+    #obj = sr.AudioFile("microphone-results.wav")
+    #r = sr.Recognizer()
+    #count = 59
+    #print("Starting to scrape...")
+    #with obj as source: 
+    #    audio = r.record(source, offset=count, duration = 1)
+    #    count += 0.5
+#
+    #print("Got Audio now to transcribe it...")
+    ## recognize speech using Google Speech Recognition
+    #try:
+    #    value = r.recognize_google(audio)
+    #    if value == word:
+    #        with open(f"Allfiles/{dir}{word}.wav",'wb') as new_word:
+    #            new_word.write(audio.get_wav_data())
+    #except:
+    #    print("no audio")
 
 def listen():
     r = sr.Recognizer()
@@ -124,8 +144,6 @@ def start():
     for i in wordbag:
         count += 1
         find_word( i,count, "")
-
-
 
 
 
