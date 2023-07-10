@@ -1,15 +1,31 @@
 import speech_recognition as sr
-import nltk
 import os
 import wave
 import math
+import numpy as np
 from pydub import AudioSegment
 from pydub.playback import play
 
+def tokenize(sent):
+    word_bag = []
+    word = ""
+    for i in sent:
+        if i != " ":
+            word+=i
+        else:
+            word_bag.append(word)
+            word = ""
+    if word != "" or word != " ":
+        word_bag.append(word)
+        
+            
+    return word_bag
 
+    
 
 def find_response(sentence):
-    wordbag = nltk.word_tokenize(sentence)
+    wordbag = tokenize(sentence)
+
     count = 0
     dir = ''
     for i in wordbag:
@@ -22,18 +38,11 @@ def find_response(sentence):
         newfile.write(new_response)
     else:
         f = open(f"Responses/{path}/response.txt", "r")
-        response = nltk.word_tokenize(f.readline)
+        response = tokenize(f.readline)
         for word in response:
             find_word(dir,word)
             sound = AudioSegment.from_wav(f"{dir}/{word}.wav")
             play(sound)
-        
-
-
-            
-
-    
-
 
 #def save_word(dir):
 #    f = open(f"{dir}/similar.txt","w+")
@@ -56,6 +65,14 @@ def find_word(word,count, audio):
     if not os.path.exists(f"Allfiles/{word_dir}{word}.wav"):
         save_word_audio(word_dir,word , count,audio)
 
+def find_change_frame(arr,currentFrame):
+    inc_frame = arr[currentFrame]+1000
+    dec_frame = arr[currentFrame]-1000
+    for frame in arr[currentFrame:-1]:
+            if (frame >= inc_frame and frame > 200) or (frame <= dec_frame and frame < 200):
+                next_frame = len(arr[currentFrame:frame])
+                break
+    return next_frame
 
 def save_word_audio(dir, word,Count,audio_file):
     print("Saving audio...")
@@ -67,29 +84,30 @@ def save_word_audio(dir, word,Count,audio_file):
 
     sample_freq = obj.getframerate()
     n_samples = obj.getnframes()
-    
     t_audio = n_samples/sample_freq
-
     frames = obj.readframes(obj.getnframes())
 
     obj.close()
 
+    signal_array = np.frombuffer(frames, dtype=np.int16)
     seconds = 0.8
     num_frames = 0
 
     
-    for j in range(0,math.ceil(t_audio/0.2)):
-        current_frame = math.ceil((j*0.2)*sample_freq)
-        next_frame = math.ceil(((j*0.2)+seconds)*sample_freq)
-        if frames[current_frame] > 20 and Count == num_frames:
+    for j in range(0,math.ceil(t_audio/seconds)):
+        current_pos = math.ceil((j*seconds)*sample_freq)
+        word_num_frames = find_change_frame(signal_array,current_pos)
+        next_pos = math.ceil((j*seconds)+(word_num_frames/sample_freq)*sample_freq)
+        if signal_array[current_pos] > 100 and Count == num_frames:
             num_frames += 1
+            print(signal_array[current_pos])
             print(num_frames)
             with wave.open(f"Allfiles/{dir}{word}.wav",'wb') as new_word:
                 new_word.setnchannels(1) # mono
                 new_word.setsampwidth(2)
                 new_word.setframerate(sample_freq)
-                new_word.writeframes(frames[current_frame:next_frame])
-        elif frames[current_frame] > 50:
+                new_word.writeframes(frames[current_pos:next_pos])
+        elif signal_array[current_pos] > 100:
             num_frames += 1
     
     #obj = sr.AudioFile("microphone-results.wav")
@@ -138,7 +156,7 @@ def listen():
 
 def start():   
     sentence = listen()
-    wordbag = nltk.word_tokenize(sentence)
+    wordbag = tokenize(sentence)
     count = 0
     for i in wordbag:
         count += 1

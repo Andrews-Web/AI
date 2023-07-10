@@ -1,10 +1,8 @@
-from fileSorting import find_word
+from fileSorting import find_word, tokenize
 from Secrets import Listnotes_API
 import requests
 import numpy as np
 import speech_recognition as sr
-import pprint
-import nltk
 import wave
 from os import path
 import subprocess
@@ -60,7 +58,7 @@ while True:
     f.write(audio.get_wav_data())
     print(value)
 
-    wordbag = nltk.word_tokenize(value)
+    wordbag = tokenize(value)
     count = 0
     dir = ""
 
