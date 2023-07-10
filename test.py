@@ -44,8 +44,7 @@ t_audio = n_samples/sample_freq
 
 
 signal_array = np.frombuffer(frames, dtype=np.int16)
-for i in signal_array[0:400]:
-    print(i)
+
 
 times = np.linspace(0, t_audio, num=n_samples)
 

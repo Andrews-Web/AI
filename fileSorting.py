@@ -68,11 +68,16 @@ def find_word(word,count, audio):
 def find_change_frame(arr,currentFrame):
     inc_frame = arr[currentFrame]+1000
     dec_frame = arr[currentFrame]-1000
+    count = 0
     for frame in arr[currentFrame:-1]:
-            if (frame >= inc_frame and frame > 200) or (frame <= dec_frame and frame < 200):
-                next_frame = len(arr[currentFrame:frame])
+        if frame > 150:
+            if frame >= inc_frame:
+                #next_frame = len(arr[currentFrame:frame])
                 break
-    return next_frame
+            else:
+                count+=1
+    print(count)
+    return count
 
 def save_word_audio(dir, word,Count,audio_file):
     print("Saving audio...")
